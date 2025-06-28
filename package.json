@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch src --ignore src/**/*.test.ts --exec tsx src/api/index.ts",
-    "test": "vitest"
+    "test": "vitest run --reporter verbose"
   },
   "dependencies": {
     "express": "^5.0.1",

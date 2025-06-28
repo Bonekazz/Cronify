@@ -1,13 +1,13 @@
-import { Jobs } from "../index.js";
+import { Jobs } from "./index.js";
 import cron from "node-cron";
 
-export interface CronJobData {
+export interface JobData {
   id: string,
   schedule: string,
   endpoint: string,
 }
 
-export function createJob(data: CronJobData) {
+export function createJob(data: JobData) {
   if (Jobs.has(data.id)) return { error: "id conflict." };
   
   // validate data fields

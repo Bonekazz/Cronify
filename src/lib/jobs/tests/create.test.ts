@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { Jobs } from "../index.js";
-import { createJob, CronJobData } from "./create.js";
+import { createJob, JobData } from "../create.js";
 
-describe("createJob", () => {
+describe("create job", () => {
   beforeEach(() => {
     Jobs.clear(); // clean state before each test
   });
 
   it("should create a new job", () => {
-    const job: CronJobData = {
+    const job: JobData = {
       id: "job1",
       schedule: "* * * * *",
       endpoint: "http://example.com/run"
@@ -20,7 +20,7 @@ describe("createJob", () => {
   });
 
   it("should not create duplicate jobs", () => {
-    const job: CronJobData = {
+    const job: JobData = {
       id: "job1",
       schedule: "* * * * *",
       endpoint: "http://example.com/run"
@@ -32,7 +32,7 @@ describe("createJob", () => {
   });
 
   it("should create a job with status 'stopped'.", () => {
-    const job: CronJobData = {
+    const job: JobData = {
       id: "job2",
       schedule: "*/5 * * * * *",
       endpoint: "http://example.com/5sec"
