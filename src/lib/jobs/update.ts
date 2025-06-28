@@ -1,24 +1,25 @@
-import { createJob, JobData } from "./create.js";
-import { Jobs } from "./index.js";
+import { createCron, CronFormData } from "./create.js";
+import { CronList } from "./index.js";
 
-export async function updateJob(data: JobData,  status?: string) {
-  // TODO. validate parameter
+export async function updateCron(data: CronFormData) {
+  const foundCron = CronList.get(data.id);
+  if (!foundCron) return { error: "not-found." };
 
-  const foundJob = Jobs.get(data.id);
-  if (!foundJob) return { error: "id not found." };
+  await foundCron.task.destroy()
+  CronList.delete(data.id);
 
-  if (!status && !data) return { error: "Should update status or data, none was provided" };
+  const updatedCron = createCron(data);
+  return { success: "cron-updated.", cronjob: updatedCron.cronjob };
+}
 
-  if (status) {
-    if (status === "enabled") await foundJob.start();
-    await foundJob.stop();
+type CronStatus = "enabled" | "disabled";
+export async function updateCronStatus(id: string, status: CronStatus) {
 
-    return { success: "Job status updated."};
-  }
-  
-  await foundJob.destroy()
-  Jobs.delete(data.id);
+  const foundCron = CronList.get(id);
+  if (!foundCron) return { error: "not-found." };
 
-  return createJob(data);
-  
+  status === "enabled" ? await foundCron.task.start() : await foundCron.task.stop();
+  const updatedStatus = await foundCron.task.getStatus();
+
+  return { success: "status-updated.", status: updatedStatus};
 }

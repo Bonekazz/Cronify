@@ -1,5 +1,13 @@
 import cron from "node-cron";
 
-type JobsMap = Map<string, cron.ScheduledTask>;
+// Only necessary fields
+export interface IMJob {
+  id: string,
+  label: string,
+  endpoint: string,
+  task: cron.ScheduledTask;
+}
 
-export const Jobs: JobsMap = new Map();
+type IMJobMap = Map<string, IMJob>;
+
+export const IMJobs: IMJobMap = new Map();

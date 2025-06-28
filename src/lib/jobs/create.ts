@@ -1,22 +1,30 @@
-import { Jobs } from "./index.js";
 import cron from "node-cron";
+import { IMJob, IMJobs } from "./index.js";
 
-export interface JobData {
-  id: string,
-  schedule: string,
-  endpoint: string,
-}
+type CreateJob = Omit<IMJob, "task"> & { schedule: string };
 
-export function createJob(data: JobData) {
-  if (Jobs.has(data.id)) return { error: "id conflict." };
+export async function createJob(data: CreateJob) {
+
+  const { id, label, schedule, endpoint } = data;
+
+  if (IMJobs.has(id)) return { error: "id conflict." };
   
-  // validate data fields
-  
-  const newJob = cron.createTask(data.schedule, async () => {
-    console.log("task info: ", data);
-  }, { noOverlap: true });
+  const task  = cron.schedule(schedule,() => {
+    console.log(`[ ${label} ] Trigerred!`);
 
-  Jobs.set(data.id, newJob);
+  }, { noOverlap: true});
 
-  return { success: "Job created!", newJob };
+  IMJobs.set(data.id, {
+    id,
+    label,
+    endpoint,
+    task,
+  });
+
+  const job = {
+    id, label, endpoint, 
+    status: await task.getStatus(),
+  }
+
+  return { success: "cron-created!", job};
 }

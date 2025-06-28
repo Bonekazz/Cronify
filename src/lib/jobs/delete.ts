@@ -1,11 +1,12 @@
-import { Jobs } from "./index.js";
+import { CronList } from "./index.js";
 
-export async function deleteJob(id: string) {
-  const foundJob = Jobs.get(id);
-  if (!foundJob) return { error: "id not found" };
+export async function deleteCron(id: string) {
+  const foundJob = CronList.get(id);
+  if (!foundJob) return { error: "not-found" };
   
-  await foundJob.destroy();
-  Jobs.delete(id);
+  await foundJob.task.stop();
+  await foundJob.task.destroy();
+  CronList.delete(id);
 
-  return { success: "Job deleted." };
+  return { success: "deleted." };
 } 
